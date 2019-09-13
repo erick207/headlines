@@ -3,8 +3,8 @@ from flask import Flask
 
 app = Flask(__name__)
 
-RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml'
-             'cnn': 'http://rss.cnn.com/rss/edition.rss'
+RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
+             'cnn': 'http://rss.cnn.com/rss/edition.rss',
              'wapo': 'http://feeds.washingtonpost.com/rss/politics?tid=lk_inline_manual_2'
              }
 
