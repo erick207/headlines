@@ -15,6 +15,9 @@ def get_news(publication="bbc"):
     first_article = feed['entries'][0]
     return """
 <html>
+    <head>
+        <link rel="icon" href="data:,">
+    </head>
     <body>
         <h1> Headlines </h1>
         <b>{0}</b> <br/>
