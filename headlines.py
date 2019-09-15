@@ -11,9 +11,10 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 @app.route("/")
 @app.route("/<publication>")
 def get_news(publication="bbc"):
-    feed = feedparser.parse(RSS_FEEDS[publication])
-    first_article = feed['entries'][0]
-    return """
+    try:
+        feed = feedparser.parse(RSS_FEEDS[publication])
+        first_article = feed['entries'][0]
+        return """
 <html>
     <head>
         <link rel="icon" href="data:,">
@@ -25,6 +26,9 @@ def get_news(publication="bbc"):
         <p>{2}</p> <br/>
     </body>
 </html>""".format(first_article.get("title"), first_article.get("published"), first_article.get("summary"))
+    except:
+        return "<html><body><p>publication: %s</p></body></html>" % str(publication)
+    
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
