@@ -5,12 +5,13 @@ app = Flask(__name__)
 
 RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'cnn': 'http://rss.cnn.com/rss/edition.rss',
-             'wapo': 'http://feeds.washingtonpost.com/rss/politics?tid=lk_inline_manual_2'
+             'wapo': 'http://feeds.washingtonpost.com/rss/politics?tid=lk_inline_manual_2',
+             'xkcd': 'https://www.xkcd.com/rss.xml'
              }
 
 @app.route("/")
 @app.route("/<publication>")
-def get_news(publication="bbc"):
+def get_news(publication="xkcd"):
     try:
         feed = feedparser.parse(RSS_FEEDS[publication])
         first_article = feed['entries'][0]
