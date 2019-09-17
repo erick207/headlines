@@ -15,7 +15,7 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 def get_news(publication="bbc"):
     try:
         feed = feedparser.parse(RSS_FEEDS[publication])
-        return render_template("home.html", articles.feed['entries'])
+        return render_template("home.html", articles=feed['entries'])
     except:
         return "<html><body><p>publication: %s</p></body></html>" % str(publication)
     
