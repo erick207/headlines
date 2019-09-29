@@ -21,19 +21,20 @@ def get_news():
             publication = "bbc"
         else:
             publication = query.lower()
-        feed = feedparser.parse(RSS_FEEDS[publication])
-        weather = get_weather("London, UK")
-        return render_template("home.html",
-                               articles=feed["entries"],
-                               weather=weather)
+        feed = feedparser.parse(RSS_FEEDS[publication])    
     except:
         return "<html><body><p>publication: %s</p></body></html>" % str(publication)
+
+    weather = get_weather("London, UK")
+    return render_template("home.html",
+                               articles=feed["entries"],
+                               weather=weather)
     
 
 def get_weather(query):
     api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=679ab64123570193b0ddd09b6bd87085"
     # handles cities with spaces in their name, etc
-    query = requests.quote(query)
+    query = requests.utils.quote(query)
     # adds the query to the URL
     url = api_url.format(query)
     # get the site
@@ -42,7 +43,7 @@ def get_weather(query):
         data_ro.raise_for_status()
     except Exception as exc:
         print("Trouble getting the site" + str(exc))
-    parsed = json.loads(data)
+    parsed = json.loads(data_ro)
     weather = None
     if parsed.get("weather"):
         weather = {"description":
