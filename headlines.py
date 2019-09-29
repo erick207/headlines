@@ -2,6 +2,8 @@ import feedparser
 from flask import Flask
 from flask import render_template
 from flask import request
+import json
+import requests
 
 app = Flask(__name__)
 
@@ -26,5 +28,28 @@ def get_news():
         return "<html><body><p>publication: %s</p></body></html>" % str(publication)
     
 
+def get_weather(query):
+    api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=679ab64123570193b0ddd09b6bd87085"
+    # handles cities with spaces in their name, etc
+    query = requests.quote(query)
+    # adds the query to the URL
+    url = api_url.format(query)
+    # get the site
+    data_ro = requests.get(url)
+    try:
+        data_ro.raise_for_status()
+    except Exception as exc:
+        print("Trouble getting the site" + str(exc))
+    parsed = json.loads(data)
+    weather = None
+    if parsed.get("weather"):
+        weather = {"description":
+                   parsed["weather"][0]["description"],
+                   "temperature":parsed["main"]["temp"],
+                   "city":parsed["name"]
+                   }
+        return weather
+    
+    
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
