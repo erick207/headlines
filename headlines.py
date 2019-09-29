@@ -22,8 +22,10 @@ def get_news():
         else:
             publication = query.lower()
         feed = feedparser.parse(RSS_FEEDS[publication])
+        weather = get_weather("London, UK")
         return render_template("home.html",
-                               articles=feed['entries'])
+                               articles=feed["entries"],
+                               weather=weather)
     except:
         return "<html><body><p>publication: %s</p></body></html>" % str(publication)
     
