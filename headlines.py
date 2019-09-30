@@ -13,22 +13,33 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'xkcd': 'https://www.xkcd.com/rss.xml'
              }
 
+DEFAULTS = {'publication':'bbc',
+            'city':'London, UK'}
+
 @app.route("/")
-def get_news():
+def home():
+    # get customized headlines, based on user input or default
+    publication = request.args.get('publication')
+    if not publication:
+        publication = DEFAULTS['publication']
+    articles = get_news(publication)
+    # get customized weather based on user input or default
+    city = request.args.get('city')
+    if not city:
+        city = DEFAULTS['city']
+    weather = get_weather(city)
+    return render_template("home.html", articles=articles, weather=weather)
+
+def get_news(query):
     try:
-        query = request.args.get("publication")
         if not query or query.lower() not in RSS_FEEDS:
-            publication = "bbc"
+            publication = DEFAULTS['publication']
         else:
             publication = query.lower()
         feed = feedparser.parse(RSS_FEEDS[publication])    
     except:
-        return "<html><body><p>publication: %s</p></body></html>" % str(publication)
-
-    weather = get_weather("London, UK")
-    return render_template("home.html",
-                               articles=feed["entries"],
-                               weather=weather)
+        return "<html><body><p>publication %s unreachable</p></body></html>" % str(publication)
+    return feed['entries']
     
 
 def get_weather(query):
@@ -46,8 +57,7 @@ def get_weather(query):
     parsed = data_ro.json()
     weather = None
     if parsed.get("weather"):
-        weather = {"description":
-                   parsed["weather"][0]["description"],
+        weather = {"description":parsed["weather"][0]["description"],
                    "temperature":parsed["main"]["temp"],
                    "city":parsed["name"]
                    }
