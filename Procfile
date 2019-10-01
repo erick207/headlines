@@ -1,1 +1,1 @@
-web: gunicorn headlines:app
+web: gunicorn -b :$PORT headlines:app
