@@ -53,13 +53,14 @@ def get_weather(query):
     try:
         data_ro.raise_for_status()
     except Exception as exc:
-        print("Trouble getting the site" + str(exc))
+        print("Trouble getting the site: " + str(exc))
     parsed = data_ro.json()
     weather = None
     if parsed.get("weather"):
         weather = {"description":parsed["weather"][0]["description"],
                    "temperature":parsed["main"]["temp"],
                    "city":parsed["name"]
+                   "country": parsed["sys"]["country"]
                    }
         return weather
     
