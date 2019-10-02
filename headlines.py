@@ -7,6 +7,10 @@ import requests
 
 app = Flask(__name__)
 
+# URL globals used to obtain services, the {} in WEATHER_URL is formatted with user input(GET)
+WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID=679ab64123570193b0ddd09b6bd87085"
+CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=98bc030a611147269cc6e7893ff0a119"
+
 RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'cnn': 'http://rss.cnn.com/rss/edition.rss',
              'wapo': 'http://feeds.washingtonpost.com/rss/politics?tid=lk_inline_manual_2',
@@ -14,7 +18,9 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              }
 
 DEFAULTS = {'publication':'bbc',
-            'city':'London, UK'}
+            'city':'London, UK',
+            'currency_from':'USD',
+            'currency_to':'ARS'}
 
 @app.route("/")
 def home():
@@ -28,7 +34,21 @@ def home():
     if not city:
         city = DEFAULTS['city']
     weather = get_weather(city)
-    return render_template("home.html", articles=articles, weather=weather)
+    # get customized currency based on user input or default
+    currency_from = request.args.get("currency_from")
+    if not currency_from:
+        currency_from = DEFAULTS['currency_from']
+    currency_to = request.args.get('currency_to')
+    if not currency_to:
+        currency_to = DEFAULTS['currency_to']
+    rate = get_rate(currency_from, currency_to)
+    
+    return render_template("home.html",
+                           articles=articles,
+                           weather=weather,
+                           currency_from=currency_from,
+                           currency_to=currency_to,
+                           rate=rate)
 
 def get_news(query):
     try:
@@ -43,17 +63,17 @@ def get_news(query):
     
 
 def get_weather(query):
-    api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=679ab64123570193b0ddd09b6bd87085"
+    # api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=679ab64123570193b0ddd09b6bd87085"
     # handles cities with spaces in their name, etc
     query = requests.utils.quote(query)
     # adds the query to the URL
-    url = api_url.format(query)
+    url = WEATHER_URL.format(query)
     # get the site
     data_ro = requests.get(url)
     try:
         data_ro.raise_for_status()
     except Exception as exc:
-        print("Trouble getting the site: " + str(exc))
+        print("Trouble getting the weather site: " + str(exc))
     parsed = data_ro.json()
     weather = None
     if parsed.get("weather"):
@@ -64,6 +84,17 @@ def get_weather(query):
                    }
         return weather
     
+def get_rate(frm, to):
+    all_currency_ro = requests.get(CURRENCY_URL)
+    try:
+        all_currency_ro.raise_for_status()
+    except Exception as exc:
+        print("trouble getting the currency site: " + str(exc))
+    parsed = all_currency_ro.json().get("rates")
+    frm_rate = parsed.get(frm.upper())
+    to_rate = parsed.get(to.upper())
+    return to_rate/frm_rate
     
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
