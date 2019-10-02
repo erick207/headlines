@@ -13,6 +13,23 @@
     <p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
     <p>{{weather.description}} |{{weather.temperature}}&#8451;</p>
     <h2>Currency</h2>
+    <form>
+      from: <select name="currency_from">
+	<option value="USD">USD</option>
+	<option value="ARS">ARS</option>
+	<option value="EUR">EUR</option>
+	<option value="ZAR">ZAR</option>
+	<option value="GBP">GBP</option>
+      </select>
+      to: <select name="currency_to">
+	<option value="ARS">ARS</option>
+	<option value="USD">USD</option>
+	<option value="EUR">EUR</option>
+	<option value="ZAR">ZAR</option>
+	<option value="GBP">GBP</option>
+      </select>
+      <input type="submit" value="Submit"
+    </form>
     <p>1 {{currency_from}} = {{currency_to}} {{rate}}</p> 
     <h2>Headlines</h2>
     <form>
