@@ -1,10 +1,30 @@
 <html>
   <head>
     <title>Headlines</title>
+    <style>
+      html {
+	  font-family: "Helvetica";
+	  background: white;
+      }
+
+      body {
+	  background: lightgrey;
+	  max-width: 900px;
+	  margin: 0 auto;
+      }
+
+      #header {
+	  background: lightsteelblue;
+      }
+    </style>
     <link rel="icon" href="data:,">
   </head>
   <body>
-    <h1>Headlines</h1>
+    <div id="header">
+      <h1>Headlines</h1>
+      <p>Headlines. Currency. Weather.</p>
+      <hr />
+    </div>
     <h2>Current weather</h2>
     <form>
       <input type="text" name="city" placeholder="weather search">
